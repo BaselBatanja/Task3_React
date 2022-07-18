@@ -1,0 +1,38 @@
+.nav
+    display flex
+    flex-direction column
+    background-color #718792
+    border-right 1px solid #ccc
+    box-shadow  0px 2px 8px rgba(black,0.2)
+    div .button
+        position absolute
+        left 50%
+        top 60%
+        transform translate(-50%,-50%)
+        background-color transparent
+        color white
+        font-size 1.5rem
+        border 1px solid #ccc
+        padding 1rem 2rem
+        border-radius 12px
+        width calc(100% - 3rem)
+
+        
+        &:hover,
+        &.active
+            color white
+            transition all 0.3s
+            background-color #1c313a
+            box-shadow  0px 2px 8px rgba(black,0.2)
+            cursor pointer
+            border-color #1c313a
+
+    .firstDiv
+        flex-basis 30%
+        position relative
+    .secondDiv
+        flex-basis 70%
+        position relative
+        .button
+            top 20%       
+    
