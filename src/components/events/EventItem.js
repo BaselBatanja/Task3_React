@@ -1,4 +1,5 @@
 import React, { useContext } from "react";
+import { useHistory } from "react-router-dom";
 import { AppContext } from "../../context/app-context";
 
 import classes from "./EventItem.module.styl";
@@ -25,6 +26,7 @@ const checkDate = (date) => {
 };
 const EventItem = (props) => {
   const ctx = useContext(AppContext);
+  const history = useHistory();
 
   const dateState = checkDate(props.date);
   let color;
@@ -44,14 +46,13 @@ const EventItem = (props) => {
   };
 
   const clickEventHandler = () => {
-    ctx.setFromEvent();
-    ctx.setLocation(false);
     ctx.setDataOfEvent({
       name: props.name,
       description: props.description,
       date: props.date,
       id: props.id,
     });
+    history.push("/new-event?fromEvent=true");
   };
   return (
     <div

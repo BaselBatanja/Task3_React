@@ -6,10 +6,12 @@ import React, {
   useState,
 } from "react";
 import { AppContext } from "../../context/app-context";
+import { useLocation, useHistory } from "react-router-dom";
 
 import classes from "./FormComponent.module.styl";
 import LoadingSpinner from "../UI/LoadingSpinner";
 import ErrorModal from "../UI/ErrorModal";
+
 const reducerFunction = (state, action) => {
   if (action.type === "SET_NAME") {
     return {
@@ -66,11 +68,15 @@ const reducerFunction = (state, action) => {
 };
 
 const FormComponent = (props) => {
+  const location = useLocation();
   const ctx = useContext(AppContext);
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
+  const history = useHistory();
 
   const dateRef = useRef();
+
   const [inputs, despatch] = useReducer(reducerFunction, {
     inputName: "",
     inputDescription: "",
@@ -85,10 +91,11 @@ const FormComponent = (props) => {
     inputs.inputDate !== undefined &&
     inputs.inputDate !== "";
 
-  const { fromEvent } = ctx;
+  const fromEvent = new URLSearchParams(location.search).get("fromEvent");
 
+  const { dataOfEvent } = ctx;
   useEffect(() => {
-    if (fromEvent) {
+    if (fromEvent && dataOfEvent !== null) {
       despatch({
         type: "SET_ALL",
         name: ctx.dataOfEvent.name,
@@ -96,8 +103,10 @@ const FormComponent = (props) => {
         date: ctx.dataOfEvent.date,
       });
       dateRef.current.value = ctx.dataOfEvent.date;
+    } else if (dataOfEvent === null && fromEvent) {
+      history.push("/events-list");
     }
-  }, [fromEvent]);
+  }, [fromEvent, dataOfEvent]);
 
   const submitHandler = (e) => {
     despatch({ type: "SET_TOUCHED_ALL" });
@@ -130,8 +139,8 @@ const FormComponent = (props) => {
             despatch({ type: "SET_TOUCHED_ALL", value: false });
 
             dateRef.current.value = "";
-            ctx.setLocation(true);
             setLoading(false);
+            history.push("/events-list");
           })
           .catch((err) => {
             setError(err.message);
@@ -139,7 +148,7 @@ const FormComponent = (props) => {
           });
       } else {
         fetch(
-          `https://task3-99c97-default-rtdb.firebaseio.com/events/${ctx.dataOfEvent.id}.json`,
+          `https://task3-99c97-default-rtdb.firebaseio.com/events/${ctx.dataOfEvent?.id}.json`,
           {
             method: "PUT",
             body: JSON.stringify(obj),
@@ -159,8 +168,8 @@ const FormComponent = (props) => {
             despatch({ type: "SET_TOUCHED_ALL", value: false });
 
             dateRef.current.value = "";
-            ctx.setLocation(true);
             setLoading(false);
+            history.push("/events-list");
           })
           .catch((err) => {
             setError(err.message);
@@ -191,6 +200,9 @@ const FormComponent = (props) => {
     despatch({ type: "SET_DESCRIPTION_TOUCHED" });
   };
 
+  const blurDateHandler = (event) => {
+    despatch({ type: "SET_DATE_TOUCHED" });
+  };
   const nameInputClassesInvalid = inputs.inputName === "" && inputs.nameTouched;
   const descriptionInputClassesInvalid =
     inputs.inputDescription === "" && inputs.descriptionTouched;
@@ -260,6 +272,7 @@ const FormComponent = (props) => {
             ref={dateRef}
             onChange={changeDateHandler}
             type="date"
+            onBlur={blurDateHandler}
             // value={inputs.inputDate}
           />
         </div>

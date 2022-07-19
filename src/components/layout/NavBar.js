@@ -1,4 +1,5 @@
 import React, { useContext } from "react";
+import { NavLink } from "react-router-dom";
 import { AppContext } from "../../context/app-context";
 
 import classes from "./NavBar.module.styl";
@@ -23,14 +24,28 @@ const NavBar = (props) => {
   return (
     <nav className={`${classes.nav} ${props.className}`}>
       <div className={classes.firstDiv}>
-        <button onClick={openListHandler} className={classesOfListButton}>
+        {/* <button onClick={openListHandler} className={classesOfListButton}>
           List
-        </button>
+        </button> */}
+        <NavLink
+          activeClassName={classes.active}
+          className={classes.button}
+          to="/events-list"
+        >
+          List
+        </NavLink>
       </div>
       <div className={classes.secondDiv}>
-        <button onClick={openFormHandler} className={classesOfFormButton}>
+        {/* <button onClick={openFormHandler} className={classesOfFormButton}>
           Form
-        </button>
+        </button> */}
+        <NavLink
+          activeClassName={classes.active}
+          className={classes.button}
+          to="/new-event"
+        >
+          Form
+        </NavLink>
       </div>
     </nav>
   );
